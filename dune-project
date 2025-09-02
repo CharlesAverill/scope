@@ -1,23 +1,26 @@
 (lang dune 3.9)
 
-(name PROJECT_NAME_)
+(name scope)
 
 (generate_opam_files true)
 
 (source
- (github _AUTHOR_USERNAME_/PROJECT_NAME_))
+ (github CharlesAverill/scope))
 
-(authors "_AUTHOR_NAME_")
+(authors "Charles Averill")
 
-(maintainers "_AUTHOR_NAME_")
+(maintainers "Charles Averill")
 
-(license _SPX_LICENSE_)
+(license MIT)
 
-(documentation https://github.com/_AUTHOR_USERNAME_/PROJECT_NAME_)
+(documentation https://github.com/CharlesAverill/scope)
 
 (package
- (name PROJECT_NAME_)
- (synopsis "_PROJECT_SYNOPSIS_")
- (description "_PROJECT_DESCRIPTION_")
- (depends ocaml dune alcotest ocamlformat odoc))
-
+ (name scope)
+ (synopsis "OCaml Image File Viewer")
+ (description "An image file viewer written in OCaml with lablgtk")
+ (depends
+   (ocaml (>= 5.3.0))
+   graphics
+ )
+)
