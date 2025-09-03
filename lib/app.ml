@@ -147,56 +147,74 @@ let default_settings settings =
 
 let quit () = Sdl.quit () ; exit 0
 
+let remove_from_array (arr : 'a array ref) (idx : int) : unit =
+  let n = Array.length !arr in
+  if idx < 0 || idx >= n then
+    invalid_arg "remove_from_array: index out of bounds" ;
+  arr :=
+    Array.init (n - 1) (fun i ->
+        if i < idx then
+          !arr.(i)
+        else
+          !arr.(i + 1) )
+
 let main_loop window renderer (image_paths : string list) : unit =
   let settings = {scale= 1.; offset= (0, 0)} in
   if image_paths = [] then
     ()
   else
-    let n = List.length image_paths in
-    let loaded_imgs = Array.make n None in
-    let loaded_textures = Array.make n None in
+    let image_paths = ref (Array.of_list image_paths) in
+    let n = Array.length !image_paths in
+    let loaded_imgs = ref (Array.make n None) in
+    let loaded_textures = ref (Array.make n None) in
     let idx = ref 0 in
     let rec draw_at ?(present_after_clear = true) ?(update_name : bool = false)
         i =
       if
         Array.for_all
           (fun i -> match i with Some (Error _) -> true | _ -> false)
-          loaded_imgs
+          !loaded_imgs
       then
         quit ()
       else (
         clear window renderer ;
         if present_after_clear then Sdl.render_present renderer ;
-        match loaded_imgs.(i) with
+        match !loaded_imgs.(i) with
         | Some (Ok img) ->
             if update_name then
               Sdl.set_window_title window
-                (img#filename ^ " - Scope Image File Viewer") ;
-            draw_texture window renderer img loaded_textures.(i) settings
+                (!image_paths.(i) ^ " - Scope Image File Viewer") ;
+            draw_texture window renderer img !loaded_textures.(i) settings
             |> ignore
-        | Some (Error s) ->
-            fatal rc_Error "Error: %s\n" s
+        | Some (Error _) ->
+            remove_from_array loaded_imgs i ;
+            remove_from_array loaded_textures i ;
+            remove_from_array image_paths i ;
+            draw_at ~update_name ~present_after_clear i
         | None -> (
-          match format_image (List.nth image_paths i) with
+          match format_image !image_paths.(i) with
           | Ok img -> (
               if update_name then
                 Sdl.set_window_title window
-                  (img#filename ^ " - Scope Image File Viewer") ;
+                  (!image_paths.(i) ^ " - Scope Image File Viewer") ;
               try
                 let tex =
                   Some (draw_texture window renderer img None settings)
                 in
-                loaded_imgs.(i) <- Some (Ok img) ;
-                loaded_textures.(i) <- tex
+                !loaded_imgs.(i) <- Some (Ok img) ;
+                !loaded_textures.(i) <- tex
               with InvalidImage ->
-                loaded_imgs.(i) <- Some (Error "invalid image") ;
-                draw_at ~update_name ~present_after_clear ((i + 1) mod n) )
+                remove_from_array image_paths i ;
+                remove_from_array loaded_imgs i ;
+                remove_from_array loaded_textures i ;
+                draw_at ~present_after_clear ~update_name i )
           | Error s ->
               _log Log_Error "Skipping invalid image '%s': %s\n"
-                (List.nth image_paths i) s ;
-              (* mark as invalid and try next index *)
-              loaded_imgs.(i) <- Some (Error s) ;
-              draw_at ~update_name ~present_after_clear ((i + 1) mod n) )
+                !image_paths.(i) s ;
+              remove_from_array image_paths i ;
+              remove_from_array loaded_imgs i ;
+              remove_from_array loaded_textures i ;
+              draw_at ~present_after_clear ~update_name i )
       )
     in
     draw_at ~present_after_clear:true ~update_name:true !idx ;
