@@ -21,7 +21,7 @@ let init_app () : Sdl.window * Sdl.renderer =
 
 type settings = {mutable scale: float; mutable offset: int * int}
 
-let min_zoom, max_zoom = (0.1, 5.)
+let min_zoom, max_zoom = (0.1, 100.)
 
 let create_checker_texture renderer tile_size =
   let surf =
@@ -72,6 +72,8 @@ let clear window renderer =
     (create_checker_texture renderer 16)
     win_w win_h
 
+exception InvalidImage
+
 let draw_texture (window : Sdl.window) (renderer : Sdl.renderer)
     (img : Formats.Format.format) (texture : Sdl.texture option)
     (settings : settings) =
@@ -87,7 +89,7 @@ let draw_texture (window : Sdl.window) (renderer : Sdl.renderer)
   let dst_y = ((win_h - scaled_h) / 2) + snd settings.offset in
   let dst_rect = Sdl.Rect.create ~x:dst_x ~y:dst_y ~w:scaled_w ~h:scaled_h in
   Sdl.set_window_title window (img#filename ^ " - Scope Image File Viewer") ;
-  Printf.printf "%s %d %d (scaled %.2f)\n" img#filename img#width img#height
+  _log Log_Debug "%s %d %d (scaled %.2f)\n" img#filename img#width img#height
     settings.scale ;
   flush stdout ;
   let tex =
@@ -102,7 +104,7 @@ let draw_texture (window : Sdl.window) (renderer : Sdl.renderer)
           in
           Sdl.free_surface surf ; tex
       | None ->
-          fatal rc_Error "Couldn't generate SDL surface" )
+          raise InvalidImage )
   in
   clear window renderer ;
   Sdl.render_copy renderer ~dst:dst_rect tex |> ignore ;
@@ -118,6 +120,8 @@ let default_settings settings =
   settings.scale <- 1. ;
   settings.offset <- (0, 0)
 
+let quit () = Sdl.quit () ; exit 0
+
 let main_loop window renderer (image_paths : string list) : unit =
   let settings = {scale= 1.; offset= (0, 0)} in
   if image_paths = [] then
@@ -127,25 +131,39 @@ let main_loop window renderer (image_paths : string list) : unit =
     let loaded_imgs = Array.make n None in
     let loaded_textures = Array.make n None in
     let idx = ref 0 in
-    let draw_at ?(present_after_clear : bool = true) i =
-      clear window renderer ;
-      if present_after_clear then Sdl.render_present renderer ;
-      match loaded_imgs.(i) with
-      | Some (Ok img) ->
-          draw_texture window renderer img loaded_textures.(i) settings
-          |> ignore
-      | Some (Error s) ->
-          Printf.printf "Error: %s\n" s ;
-          exit 1
-      | None -> (
-        match format_image (List.nth image_paths i) with
-        | Ok img ->
-            loaded_imgs.(i) <- Some (Ok img) ;
-            loaded_textures.(i) <-
-              Some (draw_texture window renderer img None settings)
-        | Error s ->
-            Printf.printf "Error: %s\n" s ;
-            exit 1 )
+    let rec draw_at ?(present_after_clear = true) i =
+      if
+        Array.for_all
+          (fun i -> match i with Some (Error _) -> true | _ -> false)
+          loaded_imgs
+      then
+        quit ()
+      else (
+        clear window renderer ;
+        if present_after_clear then Sdl.render_present renderer ;
+        match loaded_imgs.(i) with
+        | Some (Ok img) ->
+            draw_texture window renderer img loaded_textures.(i) settings
+            |> ignore
+        | Some (Error s) ->
+            fatal rc_Error "Error: %s\n" s
+        | None -> (
+          match format_image (List.nth image_paths i) with
+          | Ok img -> (
+            try
+              let tex = Some (draw_texture window renderer img None settings) in
+              loaded_imgs.(i) <- Some (Ok img) ;
+              loaded_textures.(i) <- tex
+            with InvalidImage ->
+              loaded_imgs.(i) <- Some (Error "invalid image") ;
+              draw_at ~present_after_clear ((i + 1) mod n) )
+          | Error s ->
+              _log Log_Error "Skipping invalid image '%s': %s\n"
+                (List.nth image_paths i) s ;
+              (* mark as invalid and try next index *)
+              loaded_imgs.(i) <- Some (Error s) ;
+              draw_at ~present_after_clear ((i + 1) mod n) )
+      )
     in
     draw_at !idx ;
     let break = ref false in
@@ -191,8 +209,8 @@ let main_loop window renderer (image_paths : string list) : unit =
           | k when k = Sdl.K.minus || k = Sdl.K.kp_minus ->
               settings.scale <- max min_zoom (settings.scale /. 1.25) ;
               draw_at !idx
-          | k ->
-              Printf.printf "keypress: %d\n" k )
+          | _ ->
+              () )
         | t when t = Sdl.Event.mouse_button_down ->
             let x = Sdl.Event.(get event mouse_button_x)
             and y = Sdl.Event.(get event mouse_button_y) in
@@ -217,5 +235,4 @@ let main_loop window renderer (image_paths : string list) : unit =
         | _ ->
             ()
     done ;
-    Sdl.quit () ;
-    exit 0
+    quit ()
