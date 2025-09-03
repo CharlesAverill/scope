@@ -51,7 +51,7 @@ class pgm (filename : string) : format =
           | Some x ->
               x
           | None ->
-              raise WrongFormat
+              raise (WrongFormat "couldn't parse header")
         in
         _width <- width ;
         _height <- height ;
@@ -70,7 +70,7 @@ class pgm (filename : string) : format =
                   let idx = (y * _width) + x in
                   try get_sample maxval data idx with Invalid_argument _ -> 0 )
         | _ ->
-            raise WrongFormat
+            raise (WrongFormat "incorrect magic bytes")
 
     method valid : (unit, string) result =
       if not (maxval < 65536 && maxval > 0) then

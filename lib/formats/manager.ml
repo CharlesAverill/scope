@@ -1,7 +1,7 @@
 open Format
 
 let formats : (string -> format) list =
-  [new Netpbm.Pbm.pbm; new Netpbm.Pgm.pgm; new Netpbm.Ppm.ppm]
+  [new Netpbm.Pbm.pbm; new Netpbm.Pgm.pgm; new Netpbm.Ppm.ppm; new Bmp.bmp]
 
 let format_image (fn : string) : (format, string) result =
   match

@@ -59,7 +59,7 @@ class ppm (filename : string) : format =
           | Some x ->
               x
           | None ->
-              raise WrongFormat
+              raise (WrongFormat "couldn't parse header")
         in
         maxval <- mv ;
         _width <- width ;
@@ -85,7 +85,7 @@ class ppm (filename : string) : format =
                       (get_sample maxval data (idx + 2))
                   with Invalid_argument _ -> to_sdl_color maxval 0 0 0 )
         | _ ->
-            raise WrongFormat
+            raise (WrongFormat "incorrect magic bytes")
 
     method valid : (unit, string) result =
       if not (maxval < 65536 && maxval > 0) then

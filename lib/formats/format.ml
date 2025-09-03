@@ -2,7 +2,7 @@ open Tsdl
 
 exception WrongExtension
 
-exception WrongFormat
+exception WrongFormat of string
 
 (** Class type for a formatted image *)
 class type format = object

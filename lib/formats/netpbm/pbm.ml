@@ -66,7 +66,7 @@ class pbm (filename : string) : format =
                      land (1 lsl bit_idx)
                      <> 0 )
         | _ ->
-            raise WrongFormat
+            raise (WrongFormat "incorrect magic bytes")
 
     method valid : (unit, string) result =
       if not (Array.length pixels = _height && Array.length pixels.(0) = _width)
