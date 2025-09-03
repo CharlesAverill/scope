@@ -20,3 +20,10 @@ let skip_whitespace (ic : In_channel.t) : unit =
         ()
   in
   loop ()
+
+let time_it ?(func_name : string = "func") f =
+  let start = Unix.gettimeofday () in
+  let out = f () in
+  let stop = Unix.gettimeofday () in
+  Printf.printf "Time of %s: %f\n" func_name (stop -. start) ;
+  out

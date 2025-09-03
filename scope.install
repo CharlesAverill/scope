@@ -1,0 +1,80 @@
+lib: [
+  "_build/install/default/lib/scope/META"
+  "_build/install/default/lib/scope/app.ml"
+  "_build/install/default/lib/scope/dune-package"
+  "_build/install/default/lib/scope/formats/bmp.ml" {"formats/bmp.ml"}
+  "_build/install/default/lib/scope/formats/extern/extern.ml" {"formats/extern/extern.ml"}
+  "_build/install/default/lib/scope/formats/extern/sdl_img.ml" {"formats/extern/sdl_img.ml"}
+  "_build/install/default/lib/scope/formats/format.ml" {"formats/format.ml"}
+  "_build/install/default/lib/scope/formats/formats.ml" {"formats/formats.ml"}
+  "_build/install/default/lib/scope/formats/manager.ml" {"formats/manager.ml"}
+  "_build/install/default/lib/scope/formats/netpbm/netpbm.ml" {"formats/netpbm/netpbm.ml"}
+  "_build/install/default/lib/scope/formats/netpbm/netpbm_utils.ml" {"formats/netpbm/netpbm_utils.ml"}
+  "_build/install/default/lib/scope/formats/netpbm/pbm.ml" {"formats/netpbm/pbm.ml"}
+  "_build/install/default/lib/scope/formats/netpbm/pgm.ml" {"formats/netpbm/pgm.ml"}
+  "_build/install/default/lib/scope/formats/netpbm/ppm.ml" {"formats/netpbm/ppm.ml"}
+  "_build/install/default/lib/scope/logging.ml"
+  "_build/install/default/lib/scope/opam"
+  "_build/install/default/lib/scope/scope.a"
+  "_build/install/default/lib/scope/scope.cma"
+  "_build/install/default/lib/scope/scope.cmi"
+  "_build/install/default/lib/scope/scope.cmt"
+  "_build/install/default/lib/scope/scope.cmx"
+  "_build/install/default/lib/scope/scope.cmxa"
+  "_build/install/default/lib/scope/scope.ml"
+  "_build/install/default/lib/scope/scope__App.cmi"
+  "_build/install/default/lib/scope/scope__App.cmt"
+  "_build/install/default/lib/scope/scope__App.cmx"
+  "_build/install/default/lib/scope/scope__Formats.cmi"
+  "_build/install/default/lib/scope/scope__Formats.cmt"
+  "_build/install/default/lib/scope/scope__Formats.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Bmp.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Bmp.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Bmp.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Extern.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Extern.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Extern.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Extern__Sdl_img.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Extern__Sdl_img.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Extern__Sdl_img.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Format.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Format.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Format.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Manager.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Manager.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Manager.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Netpbm_utils.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Netpbm_utils.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Netpbm_utils.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Pbm.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Pbm.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Pbm.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Pgm.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Pgm.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Pgm.cmx"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Ppm.cmi"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Ppm.cmt"
+  "_build/install/default/lib/scope/scope__Formats__Netpbm__Ppm.cmx"
+  "_build/install/default/lib/scope/scope__Logging.cmi"
+  "_build/install/default/lib/scope/scope__Logging.cmt"
+  "_build/install/default/lib/scope/scope__Logging.cmx"
+  "_build/install/default/lib/scope/scope__Utils.cmi"
+  "_build/install/default/lib/scope/scope__Utils.cmt"
+  "_build/install/default/lib/scope/scope__Utils.cmx"
+  "_build/install/default/lib/scope/utils.ml"
+]
+libexec: [
+  "_build/install/default/lib/scope/scope.cmxs"
+]
+bin: [
+  "_build/install/default/bin/scope"
+]
+doc: [
+  "_build/install/default/doc/scope/CHANGES.md"
+  "_build/install/default/doc/scope/LICENSE"
+  "_build/install/default/doc/scope/README.md"
+  "_build/install/default/doc/scope/odoc-pages/scope.mld" {"odoc-pages/scope.mld"}
+]

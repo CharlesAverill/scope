@@ -1,3 +1,6 @@
 (env
  (dev
-  (flags (:standard))))
+  (flags (:standard)))
+ (release
+  (ocamlopt_flags
+   (:standard -O3))))
