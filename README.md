@@ -12,10 +12,15 @@ scope image_path...
 
 ### Supported Formats
 
-- PBM
-- PGM
-- PPM
-- BMP
+Custom parsers:
+- [PBM](lib/formats/netpbm/pbm.ml)
+- [PGM](lib/formats/netpbm/pgm.ml)
+- [PPM](lib/formats/netpbm/ppm.ml)
+- [BMP](lib/formats/bmp.ml)
+
+Using external parsers:
+- [PNG](lib/formats/extern/sdl_img.ml)
+- [JPEG](lib/formats/extern/sdl_img.ml)
 
 ### Controls
 
