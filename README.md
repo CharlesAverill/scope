@@ -19,11 +19,12 @@ scope image_path...
 
 ### Controls
 
-| Key | Effect |
+| Control | Effect |
 | --- | --- |
 | Escape | Exits the application |
 | Arrow Keys | Go to next or previous image in series |
 | +/- | Zoom in/out |
+| Mouse click + drag | Offset image position |
 
 ## Installation
 

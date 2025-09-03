@@ -3,4 +3,4 @@
 (library
  (name scope)
  (public_name scope)
- (libraries tsdl str))
+ (libraries tsdl tsdl-image str))
