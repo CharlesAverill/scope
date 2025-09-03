@@ -83,9 +83,12 @@ class pbm (filename : string) : format =
 
     method of_surf : (Sdl.surface -> format) option = None
 
-    method to_surf : Sdl.surface =
-      if _width = 0 || _height = 0 then
-        Sdl.create_rgb_surface ~w:1 ~h:1 ~depth:32 0l 0l 0l 0l |> Result.get_ok
+    method to_surf : Sdl.surface option =
+      if
+        _width = 0 || _height = 0
+        || match self#valid with Ok _ -> false | _ -> true
+      then
+        None
       else
         let open Bigarray in
         let ba =
@@ -114,6 +117,5 @@ class pbm (filename : string) : format =
              ; Sdl.Color.create ~r:255 ~g:255 ~b:255 ~a:255 ]
              ~fst:0 ) ;
         ignore (Sdl.set_surface_palette surface palette) ;
-        (* black=0, white=1 *)
-        surface
+        Some surface
   end

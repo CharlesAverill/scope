@@ -46,7 +46,7 @@ class pgm (filename : string) : format =
       if not (Utils.fn_matches filename _filetypes) then
         raise WrongExtension
       else
-        let pos, magic, width, height, maxval =
+        let pos, magic, width, height, mv =
           match parse_pgm_header filename with
           | Some x ->
               x
@@ -55,6 +55,7 @@ class pgm (filename : string) : format =
         in
         _width <- width ;
         _height <- height ;
+        maxval <- mv ;
         match magic with
         | "P2" ->
             let pixel_data = get_text_pixels filename pos in
@@ -89,19 +90,20 @@ class pgm (filename : string) : format =
 
     method of_surf : (Sdl.surface -> format) option = None
 
-    method to_surf : Sdl.surface =
-      if _width = 0 || _height = 0 then
-        Sdl.create_rgb_surface ~w:1 ~h:1 ~depth:32 0l 0l 0l 0l |> Result.get_ok
+    method to_surf : Sdl.surface option =
+      if
+        _width = 0 || _height = 0
+        || match self#valid with Ok _ -> false | _ -> true
+      then
+        None
       else
         let open Bigarray in
-        (* Each element is a 32-bit pixel (RGBA8888) *)
         let ba =
           Array1.create Bigarray.Int32 Bigarray.C_layout (_width * _height)
         in
         for y = 0 to _height - 1 do
           for x = 0 to _width - 1 do
             let gray = pixels.(y).(x) in
-            (* normalize to 0–255 range *)
             let g =
               if maxval = 255 then
                 gray
@@ -112,15 +114,14 @@ class pgm (filename : string) : format =
             (* RGBA8888: R=G=B=g, A=255 *)
             let rgba =
               Int32.logor 0xFF000000l
-                (Int32.logor
-                   (Int32.shift_left g32 16) (* red *)
-                   (Int32.logor (Int32.shift_left g32 8) (* green *) g32) )
-              (* blue *)
+                (Int32.logor (Int32.shift_left g32 16)
+                   (Int32.logor (Int32.shift_left g32 8) g32) )
             in
             ba.{(y * _width) + x} <- rgba
           done
         done ;
         Sdl.create_rgb_surface_with_format_from ba ~w:_width ~h:_height
-          ~depth:32 ~pitch:(_width * 4) Sdl.Pixel.format_abgr8888
+          ~depth:32 ~pitch:_width Sdl.Pixel.format_abgr8888
         |> Result.get_ok
+        |> fun x -> Some x
   end

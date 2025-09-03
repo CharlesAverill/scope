@@ -25,6 +25,6 @@ class type format = object
   method of_surf : (Sdl.surface -> format) option
   (** Convert from a [Sdl.surface], optional *)
 
-  method to_surf : Sdl.surface
-  (** Convert to a [Sdl.surface] *)
+  method to_surf : Sdl.surface option
+  (** Convert to a [Sdl.surface] if valid *)
 end

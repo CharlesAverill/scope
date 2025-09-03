@@ -54,13 +54,14 @@ class ppm (filename : string) : format =
       if not (Utils.fn_matches filename _filetypes) then
         raise WrongExtension
       else
-        let pos, magic, width, height, maxval =
+        let pos, magic, width, height, mv =
           match parse_ppm_header filename with
           | Some x ->
               x
           | None ->
               raise WrongFormat
         in
+        maxval <- mv ;
         _width <- width ;
         _height <- height ;
         match magic with
@@ -104,9 +105,12 @@ class ppm (filename : string) : format =
 
     method of_surf : (Sdl.surface -> format) option = None
 
-    method to_surf : Sdl.surface =
-      if _width = 0 || _height = 0 then
-        Sdl.create_rgb_surface ~w:1 ~h:1 ~depth:32 0l 0l 0l 0l |> Result.get_ok
+    method to_surf : Sdl.surface option =
+      if
+        _width = 0 || _height = 0
+        || match self#valid with Ok _ -> false | _ -> true
+      then
+        None
       else
         let open Bigarray in
         let ba =
@@ -119,16 +123,16 @@ class ppm (filename : string) : format =
             let g = Int32.of_int (Sdl.Color.g c) in
             let b = Int32.of_int (Sdl.Color.b c) in
             let a = Int32.of_int (Sdl.Color.a c) in
-            (* Pack as RGBA8888 *)
             let rgba =
-              Int32.logor (Int32.shift_left r 24)
-                (Int32.logor (Int32.shift_left g 16)
-                   (Int32.logor (Int32.shift_left b 8) a) )
+              Int32.logor (Int32.shift_left a 24)
+                (Int32.logor (Int32.shift_left b 16)
+                   (Int32.logor (Int32.shift_left g 8) r) )
             in
             ba.{(y * _width) + x} <- rgba
           done
         done ;
         Sdl.create_rgb_surface_with_format_from ba ~w:_width ~h:_height
-          ~depth:32 ~pitch:(_width * 4) Sdl.Pixel.format_abgr8888
+          ~depth:32 ~pitch:_width Sdl.Pixel.format_abgr8888
         |> Result.get_ok
+        |> fun x -> Some x
   end
