@@ -1,4 +1,8 @@
+open Tsdl
+
 exception WrongExtension
+
+exception WrongFormat
 
 (** Class type for a formatted image *)
 class type format = object
@@ -18,9 +22,9 @@ class type format = object
   method save : string -> unit
   (** Save the image to a file *)
 
-  method of_gr_img : (Graphics.image -> format) option
-  (** Convert from a Graphics.image, optional *)
+  method of_surf : (Sdl.surface -> format) option
+  (** Convert from a [Sdl.surface], optional *)
 
-  method to_gr_img : Graphics.image
-  (** Convert to a Graphics.image *)
+  method to_surf : Sdl.surface
+  (** Convert to a [Sdl.surface] *)
 end

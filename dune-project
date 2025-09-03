@@ -21,6 +21,6 @@
  (description "An image file viewer written in OCaml with lablgtk")
  (depends
    (ocaml (>= 5.3.0))
-   graphics
+   tsdl
  )
 )

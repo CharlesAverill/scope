@@ -1,7 +1,6 @@
-(include_subdirs unqualified)
+(include_subdirs qualified)
 
 (library
  (name scope)
  (public_name scope)
- (modules app format manager ppm pbm utils logging)
- (libraries graphics str))
+ (libraries tsdl str))
