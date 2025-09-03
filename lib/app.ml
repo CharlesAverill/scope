@@ -81,7 +81,6 @@ let draw_texture (window : Sdl.window) (renderer : Sdl.renderer)
   let scaled_w = int_of_float (float img#width *. settings.scale) in
   let scaled_h = int_of_float (float img#height *. settings.scale) in
   (* get current window size *)
-  let win_w, win_h = Sdl.get_window_size window in
   let win_w, win_h = (max img#width min_win_w, max img#height min_win_h) in
   Sdl.set_window_size window ~w:win_w ~h:win_h ;
   (* calculate top-left corner to center the image *)
@@ -203,7 +202,7 @@ let main_loop window renderer (image_paths : string list) : unit =
               )
           | k when k = Sdl.K.escape ->
               break := true
-          | k when is_plus event ->
+          | _ when is_plus event ->
               settings.scale <- min max_zoom (settings.scale *. 1.25) ;
               draw_at !idx
           | k when k = Sdl.K.minus || k = Sdl.K.kp_minus ->

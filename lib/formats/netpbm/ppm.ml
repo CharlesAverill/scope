@@ -15,7 +15,6 @@ let to_sdl_color maxval r g b =
 let parse_ppm_header (filename : string) :
     (int64 * string * int * int * int) option =
   In_channel.with_open_text filename (fun ic ->
-      let line_start = In_channel.pos ic in
       match (next_token ic, next_token ic, next_token ic, next_token ic) with
       | Some magic, Some width, Some height, Some maxval ->
           Some

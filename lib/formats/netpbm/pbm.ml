@@ -7,7 +7,6 @@ open Netpbm_utils
 (** Parse PBM header and return (cursor pos, magic number, width, height) *)
 let parse_pbm_header (filename : string) : (int64 * string * int * int) option =
   In_channel.with_open_text filename (fun ic ->
-      let line_start = In_channel.pos ic in
       match (next_token ic, next_token ic, next_token ic) with
       | Some magic, Some width, Some height ->
           Some

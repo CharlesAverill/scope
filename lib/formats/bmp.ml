@@ -52,7 +52,6 @@ class bmp (filename : string) : format =
         let bfOffBits = le32 data 10 in
         _width <- le32 data 18 ;
         _height <- le32 data 22 ;
-        let biPlanes = le16 data 26 in
         let bpp = le16 data 28 in
         let colors_used = le32 data 46 in
         let row_size = ((_width * bpp) + 31) / 32 * 4 in

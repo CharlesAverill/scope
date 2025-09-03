@@ -13,7 +13,7 @@ let skip_whitespace (ic : In_channel.t) : unit =
     match In_channel.input_char ic with
     | Some c when c = ' ' || c = '\t' || c = '\n' || c = '\r' ->
         loop ()
-    | Some c ->
+    | Some _ ->
         In_channel.seek ic (Int64.pred (In_channel.pos ic))
         (* step back one char *)
     | None ->

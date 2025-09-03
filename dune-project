@@ -22,5 +22,8 @@
  (depends
    (ocaml (>= 5.3.0))
    tsdl
+   tsdl-image
+   (odoc :with-doc)
+   (ocamlformat :with-doc)
  )
 )

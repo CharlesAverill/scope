@@ -3,7 +3,7 @@ open Tsdl_image
 open Format
 
 class sdl_img (filename : string) : format =
-  object (self)
+  object (_)
     val filename : string = filename
 
     method filename = filename
