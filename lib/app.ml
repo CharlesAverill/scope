@@ -104,20 +104,30 @@ let main_loop window renderer (image_paths : string list) : unit =
             break := true
         | t when t = Sdl.Event.key_down -> (
           match Sdl.Event.(get event Sdl.Event.keyboard_keycode) with
-          | k when k = Sdl.K.right ->
-              if !idx < n - 1 then
-                idx := !idx + 1
-              else
-                idx := 0 ;
-              default_settings settings ;
-              draw_at !idx
-          | k when k = Sdl.K.left ->
-              if !idx > 0 then
-                idx := !idx - 1
-              else
-                idx := n - 1 ;
-              default_settings settings ;
-              draw_at !idx
+          | k when k = Sdl.K.right || k = Sdl.K.down ->
+              let new_idx =
+                if !idx < n - 1 then
+                  !idx + 1
+                else
+                  0
+              in
+              if new_idx <> !idx then (
+                idx := new_idx ;
+                default_settings settings ;
+                draw_at !idx
+              )
+          | k when k = Sdl.K.left || k = Sdl.K.up ->
+              let new_idx =
+                if !idx > 0 then
+                  !idx - 1
+                else
+                  n - 1
+              in
+              if new_idx <> !idx then (
+                idx := new_idx ;
+                default_settings settings ;
+                draw_at !idx
+              )
           | k when k = Sdl.K.escape ->
               break := true
           | k when is_plus event ->
