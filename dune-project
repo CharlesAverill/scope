@@ -1,5 +1,7 @@
 (lang dune 3.9)
 
+(using dune_site 0.1)
+
 (name scope)
 
 (generate_opam_files true)
@@ -23,7 +25,7 @@
    (ocaml (>= 5.3.0))
    tsdl
    tsdl-image
+   dune-site
    (odoc :with-doc)
-   (ocamlformat :with-doc)
- )
-)
+   (ocamlformat :with-doc))
+  (sites (share app_data)))

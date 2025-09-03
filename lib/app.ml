@@ -1,10 +1,18 @@
 open Tsdl
+open Tsdl_image
 open Formats.Manager
 open Logging
 
 let min_win_w, min_win_h = (400, 300)
 
 let owin_w, owin_h = (ref 0, ref 0)
+
+let app_data_path =
+  match Scope_sites.Sites.app_data with
+  | [] ->
+      fatal rc_Error "No app data path provided"
+  | h :: _ ->
+      h
 
 let init_app () : Sdl.window * Sdl.renderer =
   Sdl.init Sdl.Init.video |> ignore ;
@@ -17,6 +25,11 @@ let init_app () : Sdl.window * Sdl.renderer =
   owin_h := 600 ;
   Sdl.set_window_resizable window true ;
   Sdl.set_window_minimum_size window ~w:min_win_w ~h:min_win_h |> ignore ;
+  let icon_path = app_data_path ^ "/logo.png" in
+  print_endline icon_path ;
+  let surface = Image.load icon_path |> Result.get_ok in
+  Sdl.set_window_icon window surface ;
+  Sdl.free_surface surface ;
   let renderer =
     Sdl.create_renderer window ~index:(-1) ~flags:Sdl.Renderer.accelerated
     |> Result.get_ok

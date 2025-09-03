@@ -3,4 +3,8 @@
 (library
  (name scope)
  (public_name scope)
- (libraries tsdl tsdl-image str))
+ (libraries tsdl tsdl-image str dune-site))
+
+(generate_sites_module
+ (module scope_sites)
+ (sites scope))

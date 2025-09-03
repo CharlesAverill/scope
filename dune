@@ -4,3 +4,9 @@
  (release
   (ocamlopt_flags
    (:standard -O3))))
+
+(install
+ (section
+  (site
+   (scope app_data)))
+ (files test_imgs/logo.png))
