@@ -166,13 +166,18 @@ let main_loop window renderer (image_paths : string list) : unit =
         | None -> (
           match format_image (List.nth image_paths i) with
           | Ok img -> (
-            try
-              let tex = Some (draw_texture window renderer img None settings) in
-              loaded_imgs.(i) <- Some (Ok img) ;
-              loaded_textures.(i) <- tex
-            with InvalidImage ->
-              loaded_imgs.(i) <- Some (Error "invalid image") ;
-              draw_at ~update_name ~present_after_clear ((i + 1) mod n) )
+              if update_name then
+                Sdl.set_window_title window
+                  (img#filename ^ " - Scope Image File Viewer") ;
+              try
+                let tex =
+                  Some (draw_texture window renderer img None settings)
+                in
+                loaded_imgs.(i) <- Some (Ok img) ;
+                loaded_textures.(i) <- tex
+              with InvalidImage ->
+                loaded_imgs.(i) <- Some (Error "invalid image") ;
+                draw_at ~update_name ~present_after_clear ((i + 1) mod n) )
           | Error s ->
               _log Log_Error "Skipping invalid image '%s': %s\n"
                 (List.nth image_paths i) s ;
