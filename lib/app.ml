@@ -26,7 +26,6 @@ let init_app () : Sdl.window * Sdl.renderer =
   Sdl.set_window_resizable window true ;
   Sdl.set_window_minimum_size window ~w:min_win_w ~h:min_win_h |> ignore ;
   let icon_path = app_data_path ^ "/logo.png" in
-  print_endline icon_path ;
   let surface = Image.load icon_path |> Result.get_ok in
   Sdl.set_window_icon window surface ;
   Sdl.free_surface surface ;
