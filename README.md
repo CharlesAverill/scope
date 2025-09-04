@@ -34,6 +34,12 @@ Using external parsers:
 ## Installation
 
 ```bash
+opam install scope
+```
+
+Or, from source:
+
+```bash
 git clone https://github.com/CharlesAverill/scope.git && cd scope
 opam install . --deps-only
 dune build
