@@ -38,7 +38,7 @@ debug: build
 
 DOCS_PATH=docs/
 DOCS_NAME=scope
-DOCS_DESCR=An image file viewer written in OCaml with lablgtk
+DOCS_DESCR=An image file viewer written in OCaml
 DOCS_INDEX_TITLE=$(DOCS_NAME) - $(DOCS_DESCR)
 define DOCS_EMBED
 <meta content="$(DOCS_NAME)" property="og:title" />\

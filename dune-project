@@ -21,7 +21,7 @@
 (package
  (name scope)
  (synopsis "OCaml Image File Viewer")
- (description "An image file viewer written in OCaml with lablgtk")
+ (description "An image file viewer written in OCaml")
  (depends
    (ocaml (>= 5.3.0))
    tsdl
