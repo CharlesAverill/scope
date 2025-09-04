@@ -1,4 +1,4 @@
-(lang dune 3.9)
+(lang dune 3.18)
 
 (using dune_site 0.1)
 
@@ -12,6 +12,7 @@
 (authors "Charles Averill")
 
 (maintainers "Charles Averill")
+(maintenance_intent "(latest)")
 
 (license MIT)
 
