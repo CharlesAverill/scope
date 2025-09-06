@@ -27,3 +27,14 @@ let time_it ?(func_name : string = "func") f =
   let stop = Unix.gettimeofday () in
   Printf.printf "Time of %s: %f\n" func_name (stop -. start) ;
   out
+
+let remove_from_array (arr : 'a array ref) (idx : int) : unit =
+  let n = Array.length !arr in
+  if idx < 0 || idx >= n then
+    invalid_arg "remove_from_array: index out of bounds" ;
+  arr :=
+    Array.init (n - 1) (fun i ->
+        if i < idx then
+          !arr.(i)
+        else
+          !arr.(i + 1) )
