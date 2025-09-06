@@ -4,5 +4,6 @@ open Scope.App.Init
 
 let () =
   let args = Argparse.parse_arguments () in
-  let window, renderer = init_app () in
-  run window renderer args.image_paths
+  if 0 < List.length args.image_paths then
+    let window, renderer = init_app () in
+    run window renderer args.image_paths

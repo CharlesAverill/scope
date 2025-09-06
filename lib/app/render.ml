@@ -4,7 +4,16 @@ open Formats.Format
 
 type settings = {mutable scale: float; mutable offset: int * int}
 
-let min_zoom, max_zoom = (0.1, 100.)
+let default_settings (settings : settings) =
+  settings.scale <- 1. ;
+  settings.offset <- (0, 0)
+
+type image =
+  { path: string
+  ; mutable format: (format, string) result option
+  ; mutable texture: Sdl.texture option }
+
+let min_zoom, max_zoom = (0.01, 100.)
 
 exception InvalidImage
 
@@ -23,13 +32,10 @@ let compute_fit_scale (img : format) (win_w, win_h) =
 let draw_texture window renderer (img : Formats.Format.format)
     (texture : Sdl.texture option) (settings : settings) =
   (* If first render (scale = 1.0), compute fit-to-window scale *)
-  if settings.scale = 1.0 then (
-    let win_w, win_h = Sdl.get_window_size window in
-    let scale = compute_fit_scale img (win_w, win_h) in
-    settings.scale <- scale ;
-    Printf.printf "%s scale=%.3f\n" img#filename settings.scale ;
-    flush stdout
-  ) ;
+  ( if settings.scale = 1.0 then
+      let win_w, win_h = Sdl.get_window_size window in
+      let scale = compute_fit_scale img (win_w, win_h) in
+      settings.scale <- scale ) ;
   let scaled_w = int_of_float (float img#width *. settings.scale) in
   let scaled_h = int_of_float (float img#height *. settings.scale) in
   let win_w, win_h = Sdl.get_window_size window in
