@@ -44,5 +44,5 @@ let init_app () : Sdl.window * Sdl.renderer =
     Sdl.create_renderer window ~index:(-1) ~flags:Sdl.Renderer.accelerated
     |> Result.get_ok
   in
-  Sdl.set_hint Sdl.Hint.render_scale_quality "best" |> ignore ;
+  (* Sdl.set_hint Sdl.Hint.render_scale_quality "best" |> ignore ; *)
   (window, renderer)

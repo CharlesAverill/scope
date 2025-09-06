@@ -8,7 +8,23 @@ open Utils
 let quit () = Sdl.quit () ; exit 0
 
 let rec draw_at window renderer settings imgs ?(present_after_clear = true)
-    ?(new_render = false) i : int =
+    ?(new_render = false) ?(fit = false) i : int =
+  let do_draw new_tex img i =
+    if fit then fit_to_window window img settings ;
+    if new_render then
+      Sdl.set_window_title window (!imgs.(i).path ^ " - Scope Image File Viewer") ;
+    try
+      if new_tex then (
+        let tex = Some (draw_texture window renderer img None settings) in
+        !imgs.(i).format <- Some (Ok img) ;
+        !imgs.(i).texture <- tex
+      ) else
+        draw_texture window renderer img !imgs.(i).texture settings |> ignore ;
+      i
+    with InvalidImage ->
+      remove_from_array imgs i ;
+      draw_at ~present_after_clear ~new_render window renderer settings imgs i
+  in
   if
     Array.for_all
       (fun i -> match i.format with Some (Error _) -> true | _ -> false)
@@ -26,29 +42,14 @@ let rec draw_at window renderer settings imgs ?(present_after_clear = true)
     in
     match !imgs.(i).format with
     | Some (Ok img) ->
-        if new_render then
-          Sdl.set_window_title window
-            (!imgs.(i).path ^ " - Scope Image File Viewer") ;
-        draw_texture window renderer img !imgs.(i).texture settings |> ignore ;
-        i
+        do_draw false img i
     | Some (Error _) ->
         remove_from_array imgs i ;
         draw_at ~new_render ~present_after_clear window renderer settings imgs i
     | None -> (
       match format_image !imgs.(i).path with
-      | Ok img -> (
-          if new_render then
-            Sdl.set_window_title window
-              (!imgs.(i).path ^ " - Scope Image File Viewer") ;
-          try
-            let tex = Some (draw_texture window renderer img None settings) in
-            !imgs.(i).format <- Some (Ok img) ;
-            !imgs.(i).texture <- tex ;
-            i
-          with InvalidImage ->
-            remove_from_array imgs i ;
-            draw_at ~present_after_clear ~new_render window renderer settings
-              imgs i )
+      | Ok img ->
+          do_draw true img i
       | Error s ->
           _log Log_Error "Skipping invalid image '%s': %s\n ()" !imgs.(i).path s ;
           remove_from_array imgs i ;
@@ -57,7 +58,9 @@ let rec draw_at window renderer settings imgs ?(present_after_clear = true)
   )
 
 let run window renderer (image_paths : string list) : unit =
-  let settings = {scale= 1.; offset= (0, 0)} in
+  let settings =
+    {scale= 1.; offset= (0, 0); rotation= 0.; flip= Sdl.Flip.none}
+  in
   if image_paths = [] then exit 0 ;
   let imgs =
     ref
@@ -79,6 +82,6 @@ let run window renderer (image_paths : string list) : unit =
   (* Event loop *)
   while not state.break do
     Sdl.wait_event (Some state.event) |> Result.get_ok ;
-    handle_event draw_at n Sdl.Event.(get state.event typ) state settings
+    handle_event draw_at window n state settings Sdl.Event.(get state.event typ)
   done ;
   quit ()

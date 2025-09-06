@@ -28,8 +28,15 @@ Using external parsers:
 | --- | --- |
 | Escape | Exits the application |
 | Arrow Keys | Go to next or previous image in series |
-| +/- | Zoom in/out |
+| +/-/Mouse Scroll | Zoom in/out |
 | Mouse click + drag | Offset image position |
+| Ctrl + Mouse Scroll | Rotate |
+| Shift + Ctrl + Mouse Scroll | Rotate Slow |
+| `r` | Reset view |
+| `f` | Fit to window |
+| `h` | Flip horizontally |
+| `v` | Flip vertically |
+| `F11` | Fullscreen |
 
 ## Installation
 
