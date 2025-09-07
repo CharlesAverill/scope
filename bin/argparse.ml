@@ -70,9 +70,12 @@ let parse_arguments () =
     ; ( "--verbose"
       , Arg.Unit (fun () -> _GLOBAL_LOG_LEVEL := Log_Debug)
       , "Enable verbose logging" )
-    ; ( "-v"
-      , Arg.Unit (fun () -> _GLOBAL_LOG_LEVEL := Log_Debug)
-      , "Enable verbose logging" ) ]
+    ; ( "--version"
+      , Arg.Unit
+          (fun () ->
+            print_endline Version.version ;
+            exit 0 )
+      , "Print version" ) ]
   in
   Arg.parse speclist
     (fun n -> image_paths := collect_files n @ !image_paths)

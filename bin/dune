@@ -2,3 +2,8 @@
  (public_name scope)
  (name main)
  (libraries scope))
+
+(rule
+ (target version.ml)
+ (action
+  (write-file %{target} "let version = \"%{version:scope}\"")))

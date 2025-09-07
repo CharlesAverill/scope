@@ -3,6 +3,7 @@
 (using dune_site 0.1)
 
 (name scope)
+(version 1.1)
 
 (generate_opam_files true)
 
