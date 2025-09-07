@@ -37,6 +37,7 @@ Using external parsers:
 | `h` | Flip horizontally |
 | `v` | Flip vertically |
 | `F11` | Fullscreen |
+| Ctrl + `o` | Open files |
 
 ## Installation
 

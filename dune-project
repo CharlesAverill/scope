@@ -27,6 +27,7 @@
    tsdl
    tsdl-image
    dune-site
+   tinyfiledialogs
    (odoc :with-doc)
    (ocamlformat :with-doc))
   (sites (share app_data)))

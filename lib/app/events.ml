@@ -6,7 +6,8 @@ type state =
   ; mutable break: bool
   ; event: Sdl.event
   ; mutable dragging: bool
-  ; mutable last_mouse_pos: int * int }
+  ; mutable last_mouse_pos: int * int
+  ; mutable imgs: image array }
 
 type t_draw_at =
   ?present_after_clear:bool -> ?new_render:bool -> ?fit:bool -> int -> int
@@ -77,6 +78,10 @@ let toggle_fullscreen window =
     in
     Sdl.set_window_fullscreen window new_flag |> ignore )
 
+let img_array image_paths =
+  Array.init (List.length image_paths) (fun i ->
+      {path= List.nth image_paths i; format= None; texture= None} )
+
 let handle_key_down_event (draw_at : t_draw_at) window n settings state =
   (* Keycode *)
   match Sdl.Event.(get state.event Sdl.Event.keyboard_keycode) with
@@ -134,6 +139,23 @@ let handle_key_down_event (draw_at : t_draw_at) window n settings state =
       (* toggle fullscreen *)
       toggle_fullscreen window ;
       state.draw_idx <- draw_at ~present_after_clear:true state.draw_idx
+  | k when k = Sdl.K.o && ctrl_held () -> (
+      let
+      (* open file *)
+      open
+        Tinyfiledialogs in
+      match
+        open_file_dialog ~title:"Select Image" ~default_path:""
+          ~filter_patterns:None ~filter_desc:"Image File" ~allow_multiple:true
+      with
+      | None ->
+          ()
+      | Some files ->
+          let files = String.split_on_char '|' files in
+          state.draw_idx <- n () ;
+          state.imgs <- Array.append state.imgs (img_array files) ;
+          default_settings settings ;
+          state.draw_idx <- draw_at ~new_render:true state.draw_idx )
   | _ ->
       ()
 

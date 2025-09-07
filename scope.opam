@@ -14,6 +14,7 @@ depends: [
   "tsdl"
   "tsdl-image"
   "dune-site"
+  "tinyfiledialogs"
   "odoc" {with-doc}
   "ocamlformat" {with-doc}
 ]
