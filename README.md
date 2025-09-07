@@ -24,20 +24,20 @@ Using external parsers:
 
 ### Controls
 
-| Control | Effect |
-| --- | --- |
-| Escape | Exits the application |
-| Arrow Keys | Go to next or previous image in series |
-| +/-/Mouse Scroll | Zoom in/out |
-| Mouse click + drag | Offset image position |
-| Ctrl + Mouse Scroll | Rotate |
-| Shift + Ctrl + Mouse Scroll | Rotate Slow |
-| `r` | Reset view |
-| `f` | Fit to window |
-| `h` | Flip horizontally |
-| `v` | Flip vertically |
-| `F11` | Fullscreen |
-| Ctrl + `o` | Open files |
+| Function               | Control                     | Description                            |
+| -------------------    | --------------------------- | -------------------------------------- |
+| **Application**        | Escape                      | Exit the application                   |
+|                        | F11                         | Toggle fullscreen                      |
+| **File Operations**    | Ctrl + `o`                  | Open files                             |
+| **Navigation**         | Arrow Keys                  | Go to next or previous image in series |
+| **Image Manipulation** | `+` / `-` / Mouse Scroll    | Zoom in/out                            |
+|                        | Mouse click + drag          | Offset image position                  |
+|                        | Ctrl + Mouse Scroll         | Rotate                                 |
+|                        | Shift + Ctrl + Mouse Scroll | Rotate slowly                          |
+|                        | `f`                         | Fit image to window                    |
+|                        | `h`                         | Flip horizontally                      |
+|                        | `v`                         | Flip vertically                        |
+|                        | `r`                         | Reset view                             |
 
 ## Installation
 
