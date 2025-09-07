@@ -10,6 +10,11 @@ let remove_from_imgs (state : state) (idx : int) : unit =
   let n = Array.length state.imgs in
   if idx < 0 || idx >= n then
     invalid_arg "remove_from_array: index out of bounds" ;
+  Tinyfiledialogs.(
+    notify_popup ~title:"Scope Image Viewer"
+      ~message:
+        (Printf.sprintf "File %s could not be loaded" state.imgs.(idx).path)
+      ~icon_type:Error ) ;
   state.imgs <-
     Array.init (n - 1) (fun i ->
         if i < idx then

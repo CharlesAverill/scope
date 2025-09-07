@@ -109,6 +109,20 @@ let handle_key_down_event (draw_at : t_draw_at) window n settings state =
         default_settings settings ;
         state.draw_idx <- draw_at ~new_render:true new_idx
       )
+  | k when k = Sdl.K.home ->
+      (* go to first image *)
+      let new_idx = 0 in
+      if new_idx <> state.draw_idx then (
+        default_settings settings ;
+        state.draw_idx <- draw_at ~new_render:true new_idx
+      )
+  | k when k = Sdl.K.kend ->
+      (* go to last image *)
+      let new_idx = n () - 1 in
+      if new_idx <> state.draw_idx then (
+        default_settings settings ;
+        state.draw_idx <- draw_at ~new_render:true new_idx
+      )
   | k when k = Sdl.K.escape ->
       (* exit *)
       state.break <- true
@@ -120,10 +134,15 @@ let handle_key_down_event (draw_at : t_draw_at) window n settings state =
       (* zoom out *)
       settings.scale <- max min_zoom (settings.scale /. 1.25) ;
       state.draw_idx <- draw_at ~present_after_clear:false state.draw_idx
-  | k when k = Sdl.K.r ->
+  | k when k = Sdl.K.r && not (ctrl_held ()) ->
       (* reset view *)
+      default_settings settings
+  | k when k = Sdl.K.r && ctrl_held () ->
+      (* reload image view *)
       default_settings settings ;
-      state.draw_idx <- draw_at ~present_after_clear:false state.draw_idx
+      state.imgs.(state.draw_idx) <-
+        {path= state.imgs.(state.draw_idx).path; format= None; texture= None} ;
+      state.draw_idx <- draw_at ~new_render:true state.draw_idx
   | k when k = Sdl.K.f ->
       (* fit to window *)
       state.draw_idx <- draw_at ~fit:true state.draw_idx

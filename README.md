@@ -29,7 +29,10 @@ Using external parsers:
 | **Application**        | Escape                      | Exit the application                   |
 |                        | F11                         | Toggle fullscreen                      |
 | **File Operations**    | Ctrl + `o`                  | Open files                             |
+|                        | Ctrl + `r`                  | Reload current file                    |
 | **Navigation**         | Arrow Keys                  | Go to next or previous image in series |
+|                        | Home                        | Go to first image in carousel          |
+|                        | End                         | Go to last image in carousel           |
 | **Image Manipulation** | `+` / `-` / Mouse Scroll    | Zoom in/out                            |
 |                        | Mouse click + drag          | Offset image position                  |
 |                        | Ctrl + Mouse Scroll         | Rotate                                 |
