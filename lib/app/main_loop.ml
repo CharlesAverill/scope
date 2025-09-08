@@ -26,7 +26,7 @@ let remove_from_imgs (state : state) (idx : int) : unit =
 let rec draw_at window renderer settings state ?(present_after_clear = true)
     ?(new_render = false) ?(fit = false) i : int =
   let do_draw new_tex img i =
-    if fit then fit_to_window window img settings ;
+    if fit then fit_to_window img settings ;
     if new_render then
       Sdl.set_window_title window
         (state.imgs.(i).path ^ " - Scope Image File Viewer") ;
@@ -53,7 +53,7 @@ let rec draw_at window renderer settings state ?(present_after_clear = true)
   then
     quit ()
   else (
-    clear window renderer ;
+    clear renderer ;
     if present_after_clear then Sdl.render_present renderer ;
     let i =
       if i < 0 || i >= Array.length state.imgs then

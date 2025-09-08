@@ -7,10 +7,11 @@ let min_zoom, max_zoom = (0.01, 100.)
 
 exception InvalidImage
 
-let clear window renderer =
-  let win_w, win_h = Sdl.get_window_size window in
+let clear renderer =
   Sdl.render_clear renderer |> Utils.get_sdl_result ;
-  draw_checker_background renderer (get_checker_texture renderer 16) win_w win_h
+  draw_checker_background renderer
+    (get_checker_texture renderer 16)
+    !Init.owin_w !Init.owin_h
 
 let compute_fit_scale ?(upscale : bool = false) (fmt : format) (win_w, win_h) =
   (* Compute scaling factor to fit image within window *)
@@ -22,11 +23,11 @@ let compute_fit_scale ?(upscale : bool = false) (fmt : format) (win_w, win_h) =
   else
     min 1.0 (min scale_w scale_h)
 
-let fit_to_window window (fmt : Formats.Format.format) (settings : settings) =
+let fit_to_window (fmt : Formats.Format.format) (settings : settings) =
   (* Reset offset *)
   settings.offset <- (0, 0) ;
   (* Compute scale to fit the window *)
-  let win_w, win_h = Sdl.get_window_size window in
+  let win_w, win_h = (!Init.owin_w, !Init.owin_h) in
   let scale = compute_fit_scale ~upscale:true fmt (win_w, win_h) in
   settings.scale <- scale
 
@@ -34,7 +35,7 @@ let draw_texture window renderer (fmt : Formats.Format.format) (img : image)
     (texture : Sdl.texture option) (settings : settings) =
   (* If first render (scale = 1.0), compute fit-to-window scale *)
   ( if settings.scale = 1.0 then
-      let win_w, win_h = Sdl.get_window_size window in
+      let win_w, win_h = (!Init.owin_w, !Init.owin_h) in
       let scale = compute_fit_scale fmt (win_w, win_h) in
       settings.scale <- scale ) ;
   let scaled_w = int_of_float (float fmt#width *. settings.scale) in
@@ -59,7 +60,7 @@ let draw_texture window renderer (fmt : Formats.Format.format) (img : image)
       | None ->
           raise InvalidImage )
   in
-  clear window renderer ;
+  clear renderer ;
   Sdl.render_copy_ex renderer ~dst:dst_rect tex settings.rotation None
     settings.flip
   |> Utils.get_sdl_result ;
