@@ -3,6 +3,7 @@ open Formats.Manager
 open Logging
 open Render
 open Events
+open Types
 
 let quit () = Sdl.quit () ; exit 0
 
@@ -31,11 +32,14 @@ let rec draw_at window renderer settings state ?(present_after_clear = true)
         (state.imgs.(i).path ^ " - Scope Image File Viewer") ;
     try
       if new_tex then (
-        let tex = Some (draw_texture window renderer img None settings) in
+        let tex =
+          Some (draw_texture window renderer img state.imgs.(i) None settings)
+        in
         state.imgs.(i).format <- Some (Ok img) ;
         state.imgs.(i).texture <- tex
       ) else
-        draw_texture window renderer img state.imgs.(i).texture settings
+        draw_texture window renderer img state.imgs.(i) state.imgs.(i).texture
+          settings
         |> ignore ;
       i
     with InvalidImage ->
@@ -78,7 +82,11 @@ let rec draw_at window renderer settings state ?(present_after_clear = true)
 
 let run window renderer (image_paths : string list) : unit =
   let settings =
-    {scale= 1.; offset= (0, 0); rotation= 0.; flip= Sdl.Flip.none}
+    { scale= 1.
+    ; offset= (0, 0)
+    ; rotation= 0.
+    ; flip= Sdl.Flip.none
+    ; render_stats= false }
   in
   if image_paths = [] then exit 0 ;
   let state : state =
@@ -92,11 +100,10 @@ let run window renderer (image_paths : string list) : unit =
   let n () = Array.length state.imgs in
   let draw_at = draw_at window renderer settings state in
   (* First draw *)
-  state.draw_idx <-
-    draw_at ~present_after_clear:true ~new_render:true state.draw_idx ;
+  state.draw_idx <- draw_at ~new_render:true state.draw_idx ;
   (* Event loop *)
   while not state.break do
-    Sdl.wait_event (Some state.event) |> Result.get_ok ;
+    Sdl.wait_event (Some state.event) |> Utils.get_sdl_result ;
     handle_event draw_at window n state settings Sdl.Event.(get state.event typ)
   done ;
   quit ()

@@ -9,4 +9,4 @@
  (section
   (site
    (scope app_data)))
- (files test_imgs/logo.png))
+ (files test_imgs/logo.png app_data/fonts/CourierPrime-Regular.ttf))

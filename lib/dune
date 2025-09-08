@@ -3,7 +3,7 @@
 (library
  (name scope)
  (public_name scope)
- (libraries tsdl tsdl-image str dune-site tinyfiledialogs))
+ (libraries tsdl tsdl-image tsdl-ttf str dune-site tinyfiledialogs))
 
 (generate_sites_module
  (module scope_sites)

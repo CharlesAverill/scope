@@ -27,6 +27,7 @@
    (ocaml (>= 5.3.0))
    tsdl
    tsdl-image
+   tsdl-ttf
    dune-site
    tinyfiledialogs
    (odoc :with-doc)

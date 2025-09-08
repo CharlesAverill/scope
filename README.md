@@ -26,10 +26,11 @@ Using external parsers:
 
 | Function               | Control                     | Description                            |
 | -------------------    | --------------------------- | -------------------------------------- |
-| **Application**        | Escape                      | Exit the application                   |
+| **Application**        | Escape / Ctrl + `w`         | Exit the application                   |
 |                        | F11                         | Toggle fullscreen                      |
 | **File Operations**    | Ctrl + `o`                  | Open files                             |
 |                        | Ctrl + `r`                  | Reload current file                    |
+|                        | `s`                         | Show file statistics and histogram     |
 | **Navigation**         | Arrow Keys                  | Go to next or previous image in series |
 |                        | Home                        | Go to first image in carousel          |
 |                        | End                         | Go to last image in carousel           |

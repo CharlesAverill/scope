@@ -2,43 +2,49 @@ open Tsdl
 open Tsdl_image
 open Format
 
-class sdl_img (filename : string) : format =
-  object (_)
-    val filename : string = filename
+module SDL_Format : format_module = struct
+  let filetypes = [".png"; ".jpg"; ".jpeg"]
 
-    method filename = filename
+  class sdl_img (filename : string) : format =
+    object (_)
+      val filename : string = filename
 
-    val mutable _width : int = 0
+      method filename = filename
 
-    method width = _width
+      val mutable _width : int = 0
 
-    val mutable _height : int = 0
+      method width = _width
 
-    method height = _height
+      val mutable _height : int = 0
 
-    val mutable surf : Sdl.surface Sdl.result = Error (`Msg "uninitialized")
+      method height = _height
 
-    val _filetypes : string list = [".png"; ".jpg"; ".jpeg"]
+      val mutable surf : Sdl.surface Sdl.result = Error (`Msg "uninitialized")
 
-    method filetypes = _filetypes
+      initializer
+        surf <- Image.load filename ;
+        match surf with
+        | Error _ ->
+            ()
+        | Ok surf ->
+            let w, h = Sdl.get_surface_size surf in
+            _width <- w ;
+            _height <- h
 
-    initializer
-      surf <- Image.load filename ;
-      match surf with
-      | Error _ ->
-          ()
-      | Ok surf ->
-          let w, h = Sdl.get_surface_size surf in
-          _width <- w ;
-          _height <- h
+      method valid : (unit, string) result =
+        match surf with Ok _ -> Ok () | Error (`Msg s) -> Error s
 
-    method valid : (unit, string) result =
-      match surf with Ok _ -> Ok () | Error (`Msg s) -> Error s
+      method save (_fn : string) : unit = () (* implement as needed *)
 
-    method save (_fn : string) : unit = () (* implement as needed *)
+      method of_surf : (Sdl.surface -> format) option = None
 
-    method of_surf : (Sdl.surface -> format) option = None
+      method to_surf : Sdl.surface option =
+        match surf with
+        | Ok s ->
+            Some (Sdl.duplicate_surface s)
+        | Error _ ->
+            None
+    end
 
-    method to_surf : Sdl.surface option =
-      match surf with Ok s -> Some s | Error _ -> None
-  end
+  let f = new sdl_img
+end

@@ -33,6 +33,8 @@ let rc_Ok = (0, "OK")
 
 and rc_Error = (1, "ERROR")
 
+and rc_SDL_Error = (2, "SDL ERROR")
+
 (** ANSI encoding for bold text *)
 let ansi_bold = "\x1b[1m"
 

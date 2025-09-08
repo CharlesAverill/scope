@@ -9,9 +9,6 @@ class type format = object
   method valid : (unit, string) result
   (** Check whether the formatted image is valid *)
 
-  method filetypes : string list
-  (** The list of supported file extensions *)
-
   method filename : string
   (** Filename of the formatted image *)
 
@@ -27,4 +24,10 @@ class type format = object
 
   method to_surf : Sdl.surface option
   (** Convert to a [Sdl.surface] if valid *)
+end
+
+module type format_module = sig
+  val f : string -> format
+
+  val filetypes : string list
 end

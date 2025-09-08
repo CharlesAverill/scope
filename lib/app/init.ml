@@ -15,34 +15,37 @@ let app_data_path =
   | h :: _ ->
       h
 
+let icon_path = Filename.(concat app_data_path "logo.png")
+
+let courier_ttf_path = Filename.(concat app_data_path "CourierPrime-Regular.ttf")
+
 let init_app () : Sdl.window * Sdl.renderer =
-  Sdl.init Sdl.Init.video |> ignore ;
+  Sdl.init Sdl.Init.video |> Utils.get_sdl_result ;
+  Tsdl_ttf.Ttf.init () |> Utils.get_sdl_result ;
   (* Create window *)
   let w, h = (800, 600) in
   let window =
     Sdl.create_window "Scope Image Viewer" ~x:Sdl.Window.pos_centered
       ~y:Sdl.Window.pos_centered ~w ~h Sdl.Window.shown
-    |> Result.get_ok
+    |> Utils.get_sdl_result
   in
   owin_w := w ;
   owin_h := h ;
   let mw, mh =
-    let r = Sdl.get_display_usable_bounds 0 |> Result.get_ok in
+    let r = Sdl.get_display_usable_bounds 0 |> Utils.get_sdl_result in
     (Sdl.Rect.w r, Sdl.Rect.h r)
   in
   max_win_w := mw * 99 / 100 ;
   max_win_h := mh * 99 / 100 ;
   Sdl.set_window_resizable window true ;
   Sdl.set_window_minimum_size window ~w:min_win_w ~h:min_win_h ;
-  (* Set icon *)
-  let icon_path = app_data_path ^ "/logo.png" in
   let surface = Image.load icon_path |> Result.get_ok in
   Sdl.set_window_icon window surface ;
   Sdl.free_surface surface ;
   (* Create renderer *)
   let renderer =
     Sdl.create_renderer window ~index:(-1) ~flags:Sdl.Renderer.accelerated
-    |> Result.get_ok
+    |> Utils.get_sdl_result
   in
-  (* Sdl.set_hint Sdl.Hint.render_scale_quality "best" |> ignore ; *)
+  (* Sdl.set_hint Sdl.Hint.render_scale_quality "best" |> Utils.get_sdl_result ; *)
   (window, renderer)

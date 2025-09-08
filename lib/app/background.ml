@@ -10,7 +10,7 @@ let get_checker_texture renderer tile_size =
       let surf =
         Sdl.create_rgb_surface_with_format ~w:tile_size ~h:tile_size ~depth:32
           Sdl.Pixel.format_argb8888
-        |> Result.get_ok
+        |> Utils.get_sdl_result
       in
       let pixels = Sdl.get_surface_pixels surf Bigarray.int32 in
       for y = 0 to tile_size - 1 do
@@ -28,20 +28,20 @@ let get_checker_texture renderer tile_size =
         done
       done ;
       let tex =
-        Sdl.create_texture_from_surface renderer surf |> Result.get_ok
+        Sdl.create_texture_from_surface renderer surf |> Utils.get_sdl_result
       in
       Sdl.free_surface surf ;
       checker_tex := Some tex ;
       tex
 
 let draw_checker_background renderer checker_tex win_w win_h =
-  let _, _, (tw, th) = Sdl.query_texture checker_tex |> Result.get_ok in
+  let _, _, (tw, th) = Sdl.query_texture checker_tex |> Utils.get_sdl_result in
   let rec loop_y y =
     if y < win_h then (
       let rec loop_x x =
         if x < win_w then (
           let dst = Sdl.Rect.create ~x ~y ~w:tw ~h:th in
-          Sdl.render_copy renderer ~dst checker_tex |> ignore ;
+          Sdl.render_copy renderer ~dst checker_tex |> Utils.get_sdl_result ;
           loop_x (x + tw)
         )
       in

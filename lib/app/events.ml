@@ -1,13 +1,6 @@
 open Tsdl
 open Render
-
-type state =
-  { mutable draw_idx: int
-  ; mutable break: bool
-  ; event: Sdl.event
-  ; mutable dragging: bool
-  ; mutable last_mouse_pos: int * int
-  ; mutable imgs: image array }
+open Types
 
 type t_draw_at =
   ?present_after_clear:bool -> ?new_render:bool -> ?fit:bool -> int -> int
@@ -33,11 +26,14 @@ let mouse_wheel_direction event =
   else
     None
 
-let handle_window_event (draw_at : t_draw_at) (settings : settings)
+let handle_window_event (draw_at : t_draw_at) window (settings : settings)
     (state : state) = function
   | we when we = Sdl.Event.window_event_resized ->
       (* Re-center and re-draw *)
       settings.offset <- (0, 0) ;
+      let w, h = Sdl.get_window_size window in
+      Init.owin_w := w ;
+      Init.owin_h := h ;
       state.draw_idx <- draw_at state.draw_idx
   | _ ->
       ()
@@ -76,11 +72,14 @@ let toggle_fullscreen window =
       else
         fullscreen_desktop
     in
-    Sdl.set_window_fullscreen window new_flag |> ignore )
+    Sdl.set_window_fullscreen window new_flag |> Utils.get_sdl_result )
 
 let img_array image_paths =
   Array.init (List.length image_paths) (fun i ->
-      {path= List.nth image_paths i; format= None; texture= None} )
+      { path= List.nth image_paths i
+      ; format= None
+      ; texture= None
+      ; stats= {histogram= None} } )
 
 let handle_key_down_event (draw_at : t_draw_at) window n settings state =
   (* Keycode *)
@@ -123,7 +122,12 @@ let handle_key_down_event (draw_at : t_draw_at) window n settings state =
         default_settings settings ;
         state.draw_idx <- draw_at ~new_render:true new_idx
       )
-  | k when k = Sdl.K.escape ->
+  | k when k = Sdl.K.s ->
+      (* render stats *)
+      settings.render_stats <- not settings.render_stats ;
+      state.imgs.(state.draw_idx).texture <- None ;
+      state.draw_idx <- draw_at state.draw_idx
+  | k when k = Sdl.K.escape || (k = Sdl.K.w && ctrl_held ()) ->
       (* exit *)
       state.break <- true
   | _ when is_plus state.event ->
@@ -141,7 +145,10 @@ let handle_key_down_event (draw_at : t_draw_at) window n settings state =
       (* reload image view *)
       default_settings settings ;
       state.imgs.(state.draw_idx) <-
-        {path= state.imgs.(state.draw_idx).path; format= None; texture= None} ;
+        { path= state.imgs.(state.draw_idx).path
+        ; format= None
+        ; texture= None
+        ; stats= {histogram= None} } ;
       state.draw_idx <- draw_at ~new_render:true state.draw_idx
   | k when k = Sdl.K.f ->
       (* fit to window *)
@@ -157,7 +164,7 @@ let handle_key_down_event (draw_at : t_draw_at) window n settings state =
   | k when k = Sdl.K.f11 ->
       (* toggle fullscreen *)
       toggle_fullscreen window ;
-      state.draw_idx <- draw_at ~present_after_clear:true state.draw_idx
+      state.draw_idx <- draw_at ~present_after_clear:false state.draw_idx
   | k when k = Sdl.K.o && ctrl_held () -> (
       let
       (* open file *)
@@ -165,16 +172,29 @@ let handle_key_down_event (draw_at : t_draw_at) window n settings state =
         Tinyfiledialogs in
       match
         open_file_dialog ~title:"Select Image" ~default_path:""
-          ~filter_patterns:None ~filter_desc:"Image File" ~allow_multiple:true
+          ~filter_patterns:
+            (Some (List.map (( ^ ) "*") Formats.Manager.supported_filetypes))
+          ~filter_desc:"Image File" ~allow_multiple:true
       with
       | None ->
           ()
-      | Some files ->
-          let files = String.split_on_char '|' files in
-          state.draw_idx <- n () ;
-          state.imgs <- Array.append state.imgs (img_array files) ;
-          default_settings settings ;
-          state.draw_idx <- draw_at ~new_render:true state.draw_idx )
+      | Some files -> (
+        match
+          List.filter
+            (fun path ->
+              not
+                (Array.exists
+                   (fun img -> Utils.same_file img.path path)
+                   state.imgs ) )
+            (String.split_on_char '|' files)
+        with
+        | [] ->
+            ()
+        | files ->
+            state.draw_idx <- n () ;
+            state.imgs <- Array.append state.imgs (img_array files) ;
+            default_settings settings ;
+            state.draw_idx <- draw_at ~new_render:true state.draw_idx ) )
   | _ ->
       ()
 
@@ -215,7 +235,7 @@ let handle_event (draw_at : t_draw_at) window n (state : state)
   | t when t = Sdl.Event.quit ->
       state.break <- true
   | t when t = Sdl.Event.window_event ->
-      handle_window_event draw_at settings state
+      handle_window_event draw_at window settings state
         Sdl.Event.(get state.event window_event_id)
   | t when t = Sdl.Event.key_down ->
       handle_key_down_event draw_at window n settings state

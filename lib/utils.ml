@@ -38,3 +38,12 @@ let remove_from_array (arr : 'a array ref) (idx : int) : unit =
           !arr.(i)
         else
           !arr.(i + 1) )
+
+let same_file p1 p2 = Unix.realpath p1 = Unix.realpath p2
+
+let get_sdl_result (r : ('a, 'b) result) : 'a =
+  match r with
+  | Ok x ->
+      x
+  | Error _ ->
+      Logging.(fatal rc_SDL_Error "%s\n" (Tsdl.Sdl.get_error ()))
