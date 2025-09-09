@@ -8,6 +8,8 @@ let max_win_w, max_win_h = (ref 0, ref 0)
 
 let owin_w, owin_h = (ref 0, ref 0)
 
+let min_zoom, max_zoom = (0.01, 100.)
+
 let app_data_path =
   match Scope_sites.Sites.app_data with
   | [] ->
